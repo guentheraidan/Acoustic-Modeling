@@ -5,15 +5,29 @@ from tkinter import filedialog as fd
 class Interface(ttk.Frame):
     def __init__(self, parent):
         super().__init__()  
-        # open button
+
+    # Configure rows and columns to expand
+        self.grid_rowconfigure(0, weight=1)  # Row 0 expands
+        self.grid_columnconfigure(0, weight=1) # Column 0 expand
+        self.grid_rowconfigure(1, weight=1)  # Row 0 expands
+        self.grid_columnconfigure(1, weight=1) # Column 0 expand
+    
+    # open button
         self.open_button = ttk.Button(
             self,
             text='Open a File',
             command=self.select_file
         )
-        self.open_button.grid(row=1, column=0, padx=10)
-        #expand the button when the window expand
-        self.open_button.pack(expand=True, fill='both')
+        self.open_button.grid(row=1, sticky= "nsew")
+        
+        
+
+    #display the selected file
+
+        self.label = ttk.Label(self, text='File Name:')
+        self.label.grid(row=2, column=0)
+
+
 
         
     
@@ -29,9 +43,8 @@ class Interface(ttk.Frame):
                 initialdir='/',
                 filetypes=filetypes)
 
-            gfile = filename
-            self.label = ttk.Label(self, text='File Name:')
-            self.label.grid(row=2, column=0)
+            self.gfile = filename
 
-            self.gfile_label = ttk.Label(self, text=gfile)
-            self.gfile_label.grid(row =2, column= 1)
+            self.gfile_label = ttk.Label(self, text= self.gfile)
+            self.gfile_label.grid(row =2, column= 1, sticky = "nsew")
+            
