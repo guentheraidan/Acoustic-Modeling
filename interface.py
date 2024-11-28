@@ -43,7 +43,11 @@ class Interface(ttk.Frame):
                 initialdir='/',
                 filetypes=filetypes)
 
-            self.gfile = filename
+            #self.gfile = filename
+            if filename:  # Check if a file was selected
+                # Extract the file name by splitting the path
+                self.gfile = filename.split('/')[-1] if '/' in filename else filename.split('\\')[-1]
+
 
             self.gfile_label = ttk.Label(self, text= self.gfile)
             self.gfile_label.grid(row =2, column= 1, sticky = "nsew")
