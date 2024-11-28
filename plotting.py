@@ -1,4 +1,5 @@
 from scipy.io import wavfile
+from scipy.signal import welch
 import numpy as np
 import matplotlib.pyplot as plt
 from pydub import AudioSegment
@@ -14,7 +15,7 @@ def mp3_to_wav(mp3_file_name):
 
     return wav_file_name
 
-def file_handler(wav_file_name):
+def channel_handler(wav_file_name):
     sample_rate, data = wavfile.read(wav_file_name) # analyze wav file
 
     if len(data.shape) > 1: # if multiple channels
@@ -48,14 +49,25 @@ def plot_frequency(sample_rate, data):
     plt.title("Frequency Graph")
     plt.show()
 
+def get_highest_resonance(sample_rate, data):
+    frequencies, power = welch(data, sample_rate, nperseg=4096)
+    highest_resonance = frequencies[np.argmax(power)]
+    return round(highest_resonance, 2)
+
+def get_length(time):
+    return time[-1].round(2) # length of file (seconds)
+
 if __name__ == '__main__':
-    file_name = 'test.mp3' # placeholder file
+    file_name = 'Clap_AulaMagna_1.wav' # placeholder file
 
     if file_name[-4::] == '.mp3':
         print(f"DEBUG: {file_name[-4::]}")
         file_name = mp3_to_wav(file_name)
-
     
-    sample_rate, data, time = file_handler(file_name)
+    sample_rate, data, time = channel_handler(file_name)
+    
     plot_waveform(data, time)
     plot_frequency(sample_rate, data)
+
+    print(f"DEBUG: length is {get_length(time)} seconds")
+    print(f"DEBUG: dominant_frequency is {get_highest_resonance(sample_rate, data)} Hz")
