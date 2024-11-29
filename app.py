@@ -1,6 +1,6 @@
 #import model here
 #import model here
-from interface import Interface
+from view import Interface
 
 import tkinter as tk
 
