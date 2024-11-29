@@ -2,14 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io import wavfile
 
-sample_rate, data = wavfile.read("temp-test.wav")
-
-n = len(data)
-freqs = np.fft.rfftfreq(n, d=1/sample_rate)
-spectrum = np.abs(np.fft.rfft(data))
-
-t = np.arange(0, n) / sample_rate
-
 def find_target_frequency(freqs):
     for x in freqs:
         if x > 1000:
