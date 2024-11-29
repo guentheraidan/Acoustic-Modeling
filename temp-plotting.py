@@ -48,6 +48,8 @@ def plot_frequency(sample_rate, data):
     plt.title("Frequency Graph")
     plt.show()
 
+    return spectrum, freqs, t
+
 def get_highest_resonance(sample_rate, data):
     frequencies, power = welch(data, sample_rate, nperseg=4096)
     highest_resonance = frequencies[np.argmax(power)]
@@ -66,7 +68,7 @@ if __name__ == '__main__':
     sample_rate, data, time = channel_handler(file_name)
     
     plot_waveform(data, time)
-    plot_frequency(sample_rate, data)
+    spectrum, freqs, t = plot_frequency(sample_rate, data)
 
     print(f"DEBUG: length is {get_length(time)} seconds")
     print(f"DEBUG: dominant_frequency is {get_highest_resonance(sample_rate, data)} Hz")
