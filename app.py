@@ -14,7 +14,7 @@ class App(tk.Tk):
 
         #interface
         interface = Interface(self)
-        interface.grid(row=0, column=0,  padx=10, pady=10)
+        interface.grid(row=0, column=0, pady=10)
 
 
 if __name__ == '__main__':
