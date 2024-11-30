@@ -114,7 +114,6 @@ class Model:
         #data_in_db = 10 * np.log10(data_for_frequency)
 
     def get_points(self):
-        index
         for i in range(0, len(self.data_in_db)):
             index_of_max = np.argmax(self.data_in_db[i])
             value_of_max = self.data_in_db[i][index_of_max[i]]
