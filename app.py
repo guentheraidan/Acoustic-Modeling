@@ -7,8 +7,8 @@ import tkinter as tk
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        #window size - adjustable. Set default size and position: 800x600, 300 pixels from the left and 150 pixels from the top
-        self.geometry("800x600+300+150")
+        #window size - adjustable. Set default size and position: 800x700, 300 pixels from the left and 100 pixels from the top
+        self.geometry("800x700+300+100")
 
         self.title('Acoustic Modeling App')
 
