@@ -11,10 +11,8 @@ class Controller:
             self.model.set_file_name(file_name)
 
         self.model.channel_handler()
-        
         self.model.compute_frequency()
 
-    def get_data(self):
         # can send these variables to create graphs in View
         # and display info about the graph
         self.view.time = self.model.get_time()
@@ -40,10 +38,18 @@ class Controller:
 
         self.view.t = self.model.t
 
-        self.model.find_target_frequency()
         self.model.frequency_check()
+        self.model.compute_rt60()
 
-        # [0] = low, [1] = mid, [2] = high
-        low_points = self.model.low_points
-        mid_points = self.model.mid_points
-        high_points = self.model.high_points
+        # these are arrays ([0] = low, [1] = mid, [2] = high)
+        self.view.data_in_db = self.model.data_in_db
+        # these are arrays of arrays corresponding with the line: plt.plot(...)
+        # [0] = t[index_of_max], [1] = data_in_db[index_of_max]
+        # [0] = max, [1] = -5, [2] = -25
+        # so, the line plt.plot(t[index_of_max], data_in_db[index_of_max], 'go')
+        # will look like: plt.plot(low_points[0][0], lowpoints[1][0])
+        self.view.low_points = self.model.low_points
+        self.view.mid_points = self.model.mid_points
+        self.view.high_points = self.model.high_points
+        # this is another array ([0] = low, [1] = mid, [2] = high)
+        self.view.rt60 = self.model.rt60
