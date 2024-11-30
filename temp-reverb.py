@@ -2,13 +2,34 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io import wavfile
 
+def channel_handler(wav_file_name):
+    sample_rate, data = wavfile.read(wav_file_name) # analyze .wav file
+
+    if len(data.shape) > 1: # if multiple channels
+        print(f"DEBUG: Converted {data.shape[1]} channels to mono")
+        data = np.mean(data, axis=1) # average channels to convert to mono
+
+    length = data.shape[0] / sample_rate
+    print("LENGTH  " + str(length))
+    time = np.linspace(0., length, data.shape[0]) # create time array
+
+    print(f"DEBUG: number of channels = {data.shape[len(data.shape) -1]}")
+    print(f"DEBUG: sample rate = {sample_rate}Hz")
+    print(f"DEBUG: length = {length}s")
+
+    return sample_rate, data, time
+
+def compute_frequency(data, sample_rate):
+    spectrum, freqs, t, im = plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
+    return spectrum, freqs, t, im
+
 def find_target_frequency(freqs):
     for x in freqs:
         if x > 1000:
             break
     return x
 
-def frequency_check():
+def frequency_check(freqs, spectrum):
     # identify a frequency to check
     #print(freqs)
     global target_frequency
@@ -20,7 +41,11 @@ def frequency_check():
     data_in_db_fun = 10 * np.log10(data_for_frequency)
     return data_in_db_fun
 
-data_in_db = frequency_check()
+sample_rate, data, time = channel_handler('Clap_AulaMagna_1.wav')
+
+spectrum, freqs, t, im = compute_frequency(data, sample_rate)
+data_in_db = frequency_check(freqs, spectrum)
+
 plt.figure(2)
 
 plt.plot(t, data_in_db, linewidth=1, alpha=0.7, color='#004bc6')
@@ -30,6 +55,8 @@ plt.ylabel('Power (dB)')
 # find a index of a max value
 index_of_max = np.argmax(data_in_db)
 value_of_max = data_in_db[index_of_max]
+print(f"\nt index: {t[index_of_max]}")
+print(f"\ndata index: {data_in_db[index_of_max]}")
 plt.plot(t[index_of_max], data_in_db[index_of_max], 'go')
 
 # slice our array from a max value

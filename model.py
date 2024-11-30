@@ -39,7 +39,7 @@ class Model:
         self.mid_points = [[None, None], [None, None], [None, None]]
         self.high_points = [[None, None], [None, None], [None, None]]
         self.rt60 = [None, None, None]
-        self.difference = None
+        self.difference = 0
 
     def set_file_name(self, file_name):
         self.wav_file_name = file_name
@@ -126,11 +126,13 @@ class Model:
             index_of_max[i] = np.argmax(self.data_in_db[i])
             value_of_max[i] = self.data_in_db[i][index_of_max[i]]
             #plt.plot(t[index_of_max], data_in_db[index_of_max], 'go')
-        print(f"SELF.DATA: {self.data_in_db}")
-        print(f"\n\nINDEX: {index_of_max}")
-        self.low_points[0] = [self.t[index_of_max[0]], self.data_in_db[index_of_max[0]]]
-        self.mid_points[0] = [self.t[index_of_max[1]], self.data_in_db[index_of_max[1]]]
-        self.high_points[0] = [self.t[index_of_max[2]], self.data_in_db[index_of_max[2]]]
+        #print(f"\nindex of max: {index_of_max[0]}")
+        #print(f"\nt index: {self.t[index_of_max[0]]}")
+        #print(f"\n data: {self.data_in_db}")
+        #print(f"\n data at 15: {self.data_in_db[0][15]}")
+        self.low_points[0] = [self.t[index_of_max[0]], self.data_in_db[0][index_of_max[0]]]
+        self.mid_points[0] = [self.t[index_of_max[1]], self.data_in_db[0][index_of_max[1]]]
+        self.high_points[0] = [self.t[index_of_max[2]], self.data_in_db[0][index_of_max[2]]]
 
         sliced_array = [None, None, None]
         value_of_max_less_5 = [None, None, None]
@@ -145,16 +147,16 @@ class Model:
             index_of_max_less_5[i] = np.where(self.data_in_db[i] == value_of_max_less_5[i])
             value_of_max_less_25[i] = value_of_max[i] = 25
 
-            value_of_max_less_25[i] = self.find_nearest_value(sliced_array[i], value_of_max_less_25)
+            value_of_max_less_25[i] = self.find_nearest_value(sliced_array[i], value_of_max_less_25[i])
             index_of_max_less_25[i] = np.where(self.data_in_db[i] == value_of_max_less_25[i])
 
-        self.low_points[1] = [self.t[index_of_max_less_5[0]], self.data_in_db[index_of_max_less_5[0]]]
-        self.mid_points[1] = [self.t[index_of_max_less_5[1]], self.data_in_db[index_of_max_less_5[1]]]
-        self.high_points[1] = [self.t[index_of_max_less_5[2]], self.data_in_db[index_of_max_less_5[2]]]
+        self.low_points[1] = [self.t[index_of_max_less_5[0]], self.data_in_db[0][index_of_max_less_5[0]]]
+        self.mid_points[1] = [self.t[index_of_max_less_5[1]], self.data_in_db[0][index_of_max_less_5[1]]]
+        self.high_points[1] = [self.t[index_of_max_less_5[2]], self.data_in_db[0][index_of_max_less_5[2]]]
 
-        self.low_points[2] = [self.t[index_of_max_less_25[0]], self.data_in_db[index_of_max_less_25[0]]]
-        self.mid_points[2] = [self.t[index_of_max_less_25[1]], self.data_in_db[index_of_max_less_25[1]]]
-        self.high_points[2] = [self.t[index_of_max_less_25[2]], self.data_in_db[index_of_max_less_25[2]]]
+        self.low_points[2] = [self.t[index_of_max_less_25[0]], self.data_in_db[0][index_of_max_less_25[0]]]
+        self.mid_points[2] = [self.t[index_of_max_less_25[1]], self.data_in_db[0][index_of_max_less_25[1]]]
+        self.high_points[2] = [self.t[index_of_max_less_25[2]], self.data_in_db[0][index_of_max_less_25[2]]]
 
         rt20 = [None, None, None]
         for i in range(len(rt20)):
@@ -165,4 +167,5 @@ class Model:
         for value in self.rt60:
             self.difference += value
         self.difference /= len(self.rt60)
+        self.difference -= 0.5
         print(f"difference: {self.difference}")
