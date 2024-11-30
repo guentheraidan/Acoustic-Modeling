@@ -7,7 +7,7 @@ import numpy as np
 
 class View(ttk.Frame):
     def __init__(self, parent):
-        super().__init__()  
+        super().__init__(parent)  
 
     # # Configure rows and columns to expand
     #     self.grid_rowconfigure(0, weight=1)  # Row 0 expands
@@ -15,12 +15,12 @@ class View(ttk.Frame):
     #     self.grid_rowconfigure(1, weight=1)  # Row 0 expands
     #     self.grid_columnconfigure(1, weight=1) # Column 0 expand
     
-        self.gfile = None
+        self.gfile = ''
         self.controller = None
-        self.length = None 
-        self.rfrequency = None
-        self.time = None
-        self.data = None
+        self.length = 0 
+        self.rfrequency = 0
+        self.time = []
+        self.data = []
         self.sample_rate = None
 
         
@@ -44,6 +44,8 @@ class View(ttk.Frame):
     #display the selected file
         self.label_fname = ttk.Label(self, text='File Name:')
         self.label_fname.grid(row=2, column=0, sticky = "w")
+        self.gfile_label = ttk.Label(self, text= "")
+        self.gfile_label.grid(row =2, column= 1, sticky = "w")
 
     
 
@@ -90,10 +92,10 @@ class View(ttk.Frame):
                 # Extract the file name by splitting the path
                 self.gfile = filename.split('/')[-1] if '/' in filename else filename.split('\\')[-1]
                 self.analyze_button.grid(row=1, column = 1, sticky= "w")
-            
+
+                
             #Display file name
-            self.gfile_label = ttk.Label(self, text= self.gfile)
-            self.gfile_label.grid(row =2, column= 1, sticky = "w")
+            self.gfile_label.config(text = self.gfile)
 
     def default_plot(self):
         figure = Figure(figsize=(5, 4), dpi=120)
@@ -124,6 +126,7 @@ class View(ttk.Frame):
         if self.controller:
             self.controller.analyze_file(self.gfile)
 
+        self.controller.get_info()
         #Show waveform graph
         self.waveform_button_clicked()
 
@@ -134,7 +137,7 @@ class View(ttk.Frame):
     def diplay_info(self):
         self.label_flength.config(text = f'File Length: {self.length}')
         self.label_ffrequency.config(text = f'File Resonant Frequency: {self.rfrequency} Hz')
-        self.label_fdiff.config(text = f'Difference: {self.time} s') #might need to format later
+        self.label_fdiff.config(text = f'Difference: {self.time[-1] - self.time[0]:.2f} s') #might need to format later
     
     #Add four buttons for different graphs
     def add_buttons(self):

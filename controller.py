@@ -12,7 +12,7 @@ class Controller:
 
         self.model.channel_handler()
     
-
+    def get_data(self):
         # can send these variables to create graphs in View
         # and display info about the graph
         self.view.time = self.model.get_time()

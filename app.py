@@ -12,7 +12,7 @@ class App(tk.Tk):
 
         self.title('Acoustic Modeling App')
 
-        model = Model(self)
+        model = Model()
         #interface
         view = View(self)
         view.grid(row=0, column=0, pady=10)
