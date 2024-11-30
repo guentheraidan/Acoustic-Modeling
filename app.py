@@ -1,5 +1,5 @@
-#import model here
-#import model here
+from model import Model
+from controller import Controller
 from view import View
 
 import tkinter as tk
@@ -12,9 +12,16 @@ class App(tk.Tk):
 
         self.title('Acoustic Modeling App')
 
+        model = Model(self)
         #interface
         view = View(self)
         view.grid(row=0, column=0, pady=10)
+
+        # create a controller
+        controller = Controller(model, view)
+
+        # set the controller to view
+        view.set_controller(controller)
 
 
 if __name__ == '__main__':
