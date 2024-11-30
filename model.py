@@ -28,14 +28,17 @@ class Model:
         self.data = None
         self.time = None
         self.length = None
-
         self.spectrum = None
         self.freqs = None
         self.t = None # time array
         self.im = None
-        self.highest_resonance = None
-        self.data_in_db = None
-        self.index_of_max = None
+
+        self.data_in_db = [None, None, None]
+        self.index_of_frequency = [None, None, None]
+        self.t_at_max = [None, None, None]
+        self.low_points = [[None, None], [None, None], [None, None]]
+        self.mid_points = [[None, None], [None, None], [None, None]]
+        self.high_points = [[None, None], [None, None], [None, None]]
 
     def set_file_name(self, __file_name):
         self.file_name = __file_name
@@ -68,7 +71,8 @@ class Model:
     def get_highest_resonance(self):
         frequencies, power = welch(self.data, self.sample_rate, nperseg=4096)
         __highest_resonance = frequencies[np.argmax(power)]
-        self.highest_resonance = round(__highest_resonance, 2)
+        highest_resonance = round(__highest_resonance, 2)
+        return highest_resonance
 
     def get_length(self):
         return self.length
@@ -83,24 +87,35 @@ class Model:
         return self.sample_rate
     
 # FROM TEMP-REVERB.PY
-    def find_target_frequency(self, target=1000):
+    def find_target_frequency(self, target):
         for x in self.freqs:
             if x > target:
                 break
         return x # return target frequency
 
-    def frequency_check(self, target_frequency):
+    def frequency_check(self):
         # identify a frequency to check
         #print(freqs)
-        target_frequency = self.find_target_frequency()
-        index_of_frequency = np.where(self.freqs == target_frequency)[0][0]
-        # find sound data for a particular frequency
-        data_for_frequency = self.spectrum[index_of_frequency]
-        # change a digital signal for a values in decibels
-        data_in_db = 10 * np.log10(data_for_frequency)
-        return index_of_frequency, data_in_db
+        target_frequency = [None, None, None]
+        target_frequency[0] = self.find_target_frequency(250)
+        target_frequency[1] = self.find_target_frequency(1000)
+        target_frequency[2] = self.find_target_frequency(5000)
 
-    def get_index_max_value(self, index_of_data_in_db):
-        self.index_of_max = np.argmax(data_in_db)
-        value_of_max = data_in_db[index_of_max]
-        #plt.plot(t[index_of_max], data_in_db[index_of_max], 'go')
+        data_for_frequency = [None, None, None]
+        for i in range(0, len(target_frequency)):
+            self.index_of_frequency[i] = np.where(self.freqs == target_frequency[i])[0][0]
+            data_for_frequency[i] = self.spectrum[self.index_of_frequency[i]]
+            self.data_in_db[i] = 10 * np.log10(data_for_frequency[i])
+
+        #index_of_frequency = np.where(self.freqs == target_frequency)[0][0]
+        # find sound data for a particular frequency
+        #data_for_frequency = self.spectrum[index_of_frequency]
+        # change a digital signal for a values in decibels
+        #data_in_db = 10 * np.log10(data_for_frequency)
+
+    def get_points(self):
+        index
+        for i in range(0, len(self.data_in_db)):
+            index_of_max = np.argmax(self.data_in_db[i])
+            value_of_max = self.data_in_db[i][index_of_max[i]]
+            #plt.plot(t[index_of_max], data_in_db[index_of_max], 'go')
