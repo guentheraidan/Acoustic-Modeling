@@ -34,7 +34,7 @@ class View(ttk.Frame):
             text='Open a File',
             command=self.open_button_clicked
         )
-        self.open_button.grid(row=1, column = 0, sticky= "w", padx = 50)
+        self.open_button.grid(row=1, column = 0, sticky= "w", padx = 30)
 
     # analyze button
         self.analyze_button = ttk.Button(
@@ -47,9 +47,9 @@ class View(ttk.Frame):
 
     #display the selected file
         self.label_fname = ttk.Label(self, text='File Name:')
-        self.label_fname.grid(row=2, column=0, sticky = "e", padx= (0,5))
+        self.label_fname.grid(row=2, column=0, sticky = "e", padx= (0,10))
         self.label_gfile = ttk.Label(self, text= "")
-        self.label_gfile.grid(row=2, column= 1, sticky = "w", padx=(5,0))
+        self.label_gfile.grid(row=2, column= 1, sticky = "w", padx=(5,10))
 
     
 
@@ -63,17 +63,17 @@ class View(ttk.Frame):
     
     #display the file length 
         self.label_flength = ttk.Label(self, text='File Length: 0s')
-        self.label_flength.grid(row=5, column=0, sticky = "ew")
+        self.label_flength.grid(row=5, sticky = "ew", padx = 400)
 
 
     #display the frequency 
         self.label_ffrequency = ttk.Label(self, text='File Resonant Frequency: ___ Hz')
-        self.label_ffrequency.grid(row=6, column=0, sticky = "ew")
+        self.label_ffrequency.grid(row=6, sticky = "ew", padx = 400)
         
 
     #display the difference 
         self.label_fdiff = ttk.Label(self, text='Difference: _.__ s ')
-        self.label_fdiff.grid(row=7, column=0, sticky = "ew")
+        self.label_fdiff.grid(row=7, sticky = "ew", padx = 400)
         
 
     def set_controller(self, controller):
@@ -178,7 +178,7 @@ class View(ttk.Frame):
 
     #plotting intensity graph
     def intensity_button_clicked(self):
-        figure = Figure(figsize=(5, 4), dpi=120)
+        figure = Figure(figsize=(5, 4), dpi=150)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
         spectrum, freqs, t, im = axes.specgram(self.data, Fs=self.sample_rate, NFFT=1024, cmap=figure.get_cmap('autumn_r'))
@@ -199,7 +199,7 @@ class View(ttk.Frame):
     
     #plotting waveform graph
     def waveform_button_clicked(self):
-        figure = Figure(figsize=(5, 4), dpi=120)
+        figure = Figure(figsize=(5, 4), dpi=150)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
         x = self.time
@@ -219,7 +219,7 @@ class View(ttk.Frame):
 
     
     def cycle_RT60_button_clicked(self):
-        figure = Figure(figsize=(5, 4), dpi=120)
+        figure = Figure(figsize=(5, 4), dpi=150)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
         if self.current == 0:
@@ -241,7 +241,7 @@ class View(ttk.Frame):
             self.current = 0
 
     def combine_cycle_RT60_button_clicked(self):
-        figure = Figure(figsize=(5, 4), dpi=120)
+        figure = Figure(figsize=(5, 4), dpi=150)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
         axes.set_title("Combine RT60 Graphs")
