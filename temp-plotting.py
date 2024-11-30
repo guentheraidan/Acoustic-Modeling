@@ -22,6 +22,7 @@ def channel_handler(wav_file_name):
         data = np.mean(data, axis=1) # average channels to convert to mono
 
     length = data.shape[0] / sample_rate
+    print("LENGTH  " + str(length))
     time = np.linspace(0., length, data.shape[0]) # create time array
 
     print(f"DEBUG: number of channels = {data.shape[len(data.shape) -1]}")
@@ -70,5 +71,5 @@ if __name__ == '__main__':
     plot_waveform(data, time)
     spectrum, freqs, t = plot_frequency(sample_rate, data)
 
-    print(f"DEBUG: length is {get_length(time)} seconds")
+    print(f"DEBUG: length is {get_length(length)} seconds")
     print(f"DEBUG: dominant_frequency is {get_highest_resonance(sample_rate, data)} Hz")
