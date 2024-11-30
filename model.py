@@ -35,13 +35,13 @@ class Model:
 
         self.data_in_db = [None, None, None]
         self.index_of_frequency = [None, None, None]
-        self.t_at_max = [None, None, None]
         self.low_points = [[None, None], [None, None], [None, None]]
         self.mid_points = [[None, None], [None, None], [None, None]]
         self.high_points = [[None, None], [None, None], [None, None]]
+        self.rt60 = [None, None, None]
 
-    def set_file_name(self, __file_name):
-        self.file_name = __file_name
+    def set_file_name(self, file_name):
+        self.wav_file_name = file_name
 
 # FROM TEMP-PLOTTING.PY
     def mp3_to_wav(self, mp3_file_name):
@@ -113,8 +113,47 @@ class Model:
         # change a digital signal for a values in decibels
         #data_in_db = 10 * np.log10(data_for_frequency)
 
-    def get_points(self):
+    def find_nearest_value(self, array, value):
+        array = np.asarray(array)
+        idx = (np.abs(array - value)).argmin()
+        return array[idx]
+
+    def compute_rt60(self):
+        index_of_max = [None, None, None]
+        value_of_max = [None, None, None]
         for i in range(0, len(self.data_in_db)):
-            index_of_max = np.argmax(self.data_in_db[i])
-            value_of_max = self.data_in_db[i][index_of_max[i]]
+            index_of_max[i] = np.argmax(self.data_in_db[i])
+            value_of_max[i] = self.data_in_db[i][index_of_max[i]]
             #plt.plot(t[index_of_max], data_in_db[index_of_max], 'go')
+        self.low_points[0] = [self.t[index_of_max[0]], self.data_in_db[index_of_max[0]]]
+        self.mid_points[0] = [self.t[index_of_max[1]], self.data_in_db[index_of_max[1]]]
+        self.high_points[0] = [self.t[index_of_max[2]], self.data_in_db[index_of_max[2]]]
+
+        sliced_array = [None, None, None]
+        value_of_max_less_5 = [None, None, None]
+        index_of_max_less_5 = [None, None, None]
+        value_of_max_less_25 = [None, None, None]
+        index_of_max_less_25 = [None, None, None]
+        for i in range(0, len(self.data_in_db)):
+            sliced_array[i] = self.data_in_db[i][index_of_max[i]:]
+
+            value_of_max_less_5[i] = value_of_max[i] - 5
+            value_of_max_less_5[i] = self.find_nearest_value(sliced_array[i], value_of_max_less_5[i])
+            index_of_max_less_5[i] = np.where(self.data_in_db[i] == value_of_max_less_5[i])
+            value_of_max_less_25[i] = value_of_max[i] = 25
+
+            value_of_max_less_25[i] = self.find_nearest_value(sliced_array[i], value_of_max_less_25)
+            index_of_max_less_25[i] = np.where(self.data_in_db[i] == value_of_max_less_25[i])
+
+        self.low_points[1] = [self.t[index_of_max_less_5[0]], self.data_in_db[index_of_max_less_5[0]]]
+        self.mid_points[1] = [self.t[index_of_max_less_5[1]], self.data_in_db[index_of_max_less_5[1]]]
+        self.high_points[1] = [self.t[index_of_max_less_5[2]], self.data_in_db[index_of_max_less_5[2]]]
+
+        self.low_points[2] = [self.t[index_of_max_less_25[0]], self.data_in_db[index_of_max_less_25[0]]]
+        self.mid_points[2] = [self.t[index_of_max_less_25[1]], self.data_in_db[index_of_max_less_25[1]]]
+        self.high_points[2] = [self.t[index_of_max_less_25[2]], self.data_in_db[index_of_max_less_25[2]]]
+
+        rt20 = [None, None, None]
+        for i in range(len(rt20)):
+            rt20[i] = (self.t[index_of_max_less_5[i]] - self.t[index_of_max_less_25[i]])
+            self.rt60[i] = 3 * rt20[i]
