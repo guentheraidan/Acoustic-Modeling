@@ -1,6 +1,6 @@
 #import model here
 #import model here
-from view import Interface
+from view import View
 
 import tkinter as tk
 
@@ -13,8 +13,8 @@ class App(tk.Tk):
         self.title('Acoustic Modeling App')
 
         #interface
-        interface = Interface(self)
-        interface.grid(row=0, column=0, pady=10)
+        view = View(self)
+        view.grid(row=0, column=0, pady=10)
 
 
 if __name__ == '__main__':
