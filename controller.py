@@ -53,3 +53,4 @@ class Controller:
         self.view.high_points = self.model.high_points
         # this is another array ([0] = low, [1] = mid, [2] = high)
         self.view.rt60 = self.model.rt60
+        self.view.difference = self.model.difference

@@ -22,6 +22,7 @@ class App(tk.Tk):
 
         # set the controller to view
         view.set_controller(controller)
+        controller.analyze_file('Clap_AulaMagna_1.wav')
 
 
 if __name__ == '__main__':

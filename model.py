@@ -39,6 +39,7 @@ class Model:
         self.mid_points = [[None, None], [None, None], [None, None]]
         self.high_points = [[None, None], [None, None], [None, None]]
         self.rt60 = [None, None, None]
+        self.difference = None
 
     def set_file_name(self, file_name):
         self.wav_file_name = file_name
@@ -125,6 +126,8 @@ class Model:
             index_of_max[i] = np.argmax(self.data_in_db[i])
             value_of_max[i] = self.data_in_db[i][index_of_max[i]]
             #plt.plot(t[index_of_max], data_in_db[index_of_max], 'go')
+        print(f"SELF.DATA: {self.data_in_db}")
+        print(f"\n\nINDEX: {index_of_max}")
         self.low_points[0] = [self.t[index_of_max[0]], self.data_in_db[index_of_max[0]]]
         self.mid_points[0] = [self.t[index_of_max[1]], self.data_in_db[index_of_max[1]]]
         self.high_points[0] = [self.t[index_of_max[2]], self.data_in_db[index_of_max[2]]]
@@ -157,3 +160,9 @@ class Model:
         for i in range(len(rt20)):
             rt20[i] = (self.t[index_of_max_less_5[i]] - self.t[index_of_max_less_25[i]])
             self.rt60[i] = 3 * rt20[i]
+            print(f"{i} RT60 = {self.rt60[i]}")
+
+        for value in self.rt60:
+            self.difference += value
+        self.difference /= len(self.rt60)
+        print(f"difference: {self.difference}")
