@@ -11,13 +11,10 @@ class Controller:
             self.model.set_file_name(file_name)
 
         self.model.channel_handler()
-<<<<<<< HEAD
-    
-    def get_data(self):
-=======
+        
         self.model.compute_frequency()
 
->>>>>>> main
+    def get_data(self):
         # can send these variables to create graphs in View
         # and display info about the graph
         self.view.time = self.model.get_time()
