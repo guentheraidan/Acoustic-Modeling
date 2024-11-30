@@ -14,6 +14,8 @@ class View(ttk.Frame):
     #     self.grid_columnconfigure(0, weight=1) # Column 0 expand
     #     self.grid_rowconfigure(1, weight=1)  # Row 0 expands
     #     self.grid_columnconfigure(1, weight=1) # Column 0 expand
+
+
     
         self.gfile = ''
         self.controller = None
@@ -22,6 +24,7 @@ class View(ttk.Frame):
         self.time = []
         self.data = []
         self.sample_rate = None
+        self.difference = None
         self.current = 0 #For Low, Miu, High button
 
         
@@ -31,7 +34,7 @@ class View(ttk.Frame):
             text='Open a File',
             command=self.open_button_clicked
         )
-        self.open_button.grid(row=1, column = 0, sticky= "w")
+        self.open_button.grid(row=1, column = 0, sticky= "w", padx = 50)
 
     # analyze button
         self.analyze_button = ttk.Button(
@@ -39,14 +42,14 @@ class View(ttk.Frame):
             text='Analyze File',
             command=self.analyze_file
         )
-        self.analyze_button.grid(row=1, column = 1, sticky= "w")
+        self.analyze_button.grid(row=1, column = 1, sticky= "e")
         self.analyze_button.grid_forget() #hide the button when there is no file opened
 
     #display the selected file
         self.label_fname = ttk.Label(self, text='File Name:')
-        self.label_fname.grid(row=2, column=0, sticky = "w")
-        self.gfile_label = ttk.Label(self, text= "")
-        self.gfile_label.grid(row =2, column= 1, sticky = "w")
+        self.label_fname.grid(row=2, column=0, sticky = "e", padx= (0,5))
+        self.label_gfile = ttk.Label(self, text= "")
+        self.label_gfile.grid(row=2, column= 1, sticky = "w", padx=(5,0))
 
     
 
@@ -96,10 +99,10 @@ class View(ttk.Frame):
 
                 
             #Display file name
-            self.gfile_label.config(text = self.gfile)
+            self.label_gfile.config(text = self.gfile)
 
     def default_plot(self):
-        figure = Figure(figsize=(5, 4), dpi=120)
+        figure = Figure(figsize=(5, 4), dpi=150)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
         x = [0, .2, .4, .6, .8, 1]
@@ -127,7 +130,7 @@ class View(ttk.Frame):
         if self.controller:
             self.controller.analyze_file(self.gfile)
 
-        self.controller.get_info()
+        
         #Show waveform graph
         self.waveform_button_clicked()
 
@@ -138,7 +141,7 @@ class View(ttk.Frame):
     def diplay_info(self):
         self.label_flength.config(text = f'File Length: {self.length}')
         self.label_ffrequency.config(text = f'File Resonant Frequency: {self.rfrequency} Hz')
-        self.label_fdiff.config(text = f'Difference: {self.time[-1] - self.time[0]:.2f} s') #might need to format later
+        self.label_fdiff.config(text = f'Difference: {self.difference[-1] - self.difference[0]:.2f} s') #might need to format later
     
     #Add four buttons for different graphs
     def add_buttons(self):
