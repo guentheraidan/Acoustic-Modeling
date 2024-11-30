@@ -22,6 +22,7 @@ class View(ttk.Frame):
         self.time = []
         self.data = []
         self.sample_rate = None
+        self.current = 0 #For Low, Miu, High button
 
         
     # open button
@@ -161,14 +162,14 @@ class View(ttk.Frame):
         self.cycle_RT60_button = ttk.Button(
             self,
             text='Cycle RT60 Graph',
-            #command=self.cycle_RT60_button_clicked
+            command=self.cycle_RT60_button_clicked
         )
         self.cycle_RT60_button.grid(row = 4, column = 2, padx = 20, pady = 10)
         
         self.combine_cycle_RT60_button = ttk.Button(
             self,
             text='Combine RT60 Graphs',
-            #command=self.cycle_RT60_button_clicked
+            command=self.combine_cycle_RT60_button_clicked
         )
         self.combine_cycle_RT60_button.grid(row = 5, column = 2, padx = 30, pady = 10)
 
@@ -199,7 +200,7 @@ class View(ttk.Frame):
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
         x = self.time
-        y = self.time
+        y = self.data
         axes.plot(x, y)
         axes.set_title("Waveform Graph")
         axes.set_xlabel("Time (s)")
@@ -214,5 +215,30 @@ class View(ttk.Frame):
         canvas_widget.pack(fill=tk.BOTH, expand=True) 
 
     
+    def cycle_RT60_button_clicked(self):
+        figure = Figure(figsize=(5, 4), dpi=120)
+        axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
+        if self.current == 0:
+            self.cycle_RT60_button.config(text = "Low")
+            axes.set_title("Low RT60 Graph")
+            #add graph data here
+            self.current = 1
 
+        elif self.current == 1:
+            self.cycle_RT60_button.config(text = "Mid")
+            axes.set_title("Mid RT60 Graph")
+            #add graph data here
+            self.current = 2
+        
+        elif self.current == 2:
+            self.cycle_RT60_button.config(text = "High")
+            axes.set_title("High RT60 Graph")
+            #add graph data here
+            self.current = 0
+
+    def combine_cycle_RT60_button_clicked(self):
+        figure = Figure(figsize=(5, 4), dpi=120)
+        axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
+
+        axes.set_title("Combine RT60 Graphs")
