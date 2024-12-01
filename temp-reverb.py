@@ -6,16 +6,16 @@ def channel_handler(wav_file_name):
     sample_rate, data = wavfile.read(wav_file_name) # analyze .wav file
 
     if len(data.shape) > 1: # if multiple channels
-        print(f"DEBUG: Converted {data.shape[1]} channels to mono")
+        #print(f"DEBUG: Converted {data.shape[1]} channels to mono")
         data = np.mean(data, axis=1) # average channels to convert to mono
 
     length = data.shape[0] / sample_rate
-    print("LENGTH  " + str(length))
+    #print("LENGTH  " + str(length))
     time = np.linspace(0., length, data.shape[0]) # create time array
 
-    print(f"DEBUG: number of channels = {data.shape[len(data.shape) -1]}")
-    print(f"DEBUG: sample rate = {sample_rate}Hz")
-    print(f"DEBUG: length = {length}s")
+    #print(f"DEBUG: number of channels = {data.shape[len(data.shape) -1]}")
+    #print(f"DEBUG: sample rate = {sample_rate}Hz")
+    #print(f"DEBUG: length = {length}s")
 
     return sample_rate, data, time
 
@@ -25,7 +25,7 @@ def compute_frequency(data, sample_rate):
 
 def find_target_frequency(freqs):
     for x in freqs:
-        if x > 1000:
+        if x > 5000:
             break
     return x
 
@@ -55,8 +55,10 @@ plt.ylabel('Power (dB)')
 # find a index of a max value
 index_of_max = np.argmax(data_in_db)
 value_of_max = data_in_db[index_of_max]
-print(f"\nt index: {t[index_of_max]}")
-print(f"\ndata index: {data_in_db[index_of_max]}")
+print(f"data: {data_in_db}")
+print(f"\nindex: {index_of_max}")
+print(f"t index: {t[index_of_max]}")
+print(f"data index: {data_in_db[index_of_max]}")
 plt.plot(t[index_of_max], data_in_db[index_of_max], 'go')
 
 # slice our array from a max value
@@ -80,10 +82,11 @@ index_of_max_less_25 = np.where(data_in_db == value_of_max_less_25)
 plt.plot(t[index_of_max_less_25], data_in_db[index_of_max_less_25], 'ro')
 
 rt20 = (t[index_of_max_less_5] - t[index_of_max_less_25])[0]
-print(f'rt20= {rt20}')
+#print(f'rt20= {rt20}')
 rt60 = 3 * rt20
+#print(f'rt60= {rt60}')
 plt.xlim(0, ((round(abs(rt60), 2)) * 1.5))
 plt.grid()
 plt.show()
 
-print(f'The RT60 reverb time at freq {int(target_frequency)} Hz is {round(abs(rt60), 2)} seconds')
+#print(f'The RT60 reverb time at freq {int(target_frequency)} Hz is {round(abs(rt60), 2)} seconds')

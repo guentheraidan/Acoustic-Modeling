@@ -33,21 +33,13 @@ class Model:
         self.t = None # time array
         self.im = None
 
-        self.data_in_db = [None, None, None]
-        self.index_of_frequency = [None, None, None]
-        self.low_points = [[None, None], [None, None], [None, None]]
-        self.mid_points = [[None, None], [None, None], [None, None]]
-        self.high_points = [[None, None], [None, None], [None, None]]
-        self.rt60 = [None, None, None]
-        self.difference = 0
-
     def set_file_name(self, file_name):
         self.wav_file_name = file_name
 
 # FROM TEMP-PLOTTING.PY
     def mp3_to_wav(self, mp3_file_name):
         self.wav_file_name = path.splitext(mp3_file_name)[0] + ".wav" # create .wav destination name
-        print(f"DEBUG: Converting {mp3_file_name} to {self.wav_file_name}")
+        #print(f"DEBUG: Converting {mp3_file_name} to {self.wav_file_name}")
 
         sound = AudioSegment.from_mp3(mp3_file_name)
         sound.export(self.wav_file_name, format="wav")
@@ -56,15 +48,15 @@ class Model:
         self.sample_rate, self.data = wavfile.read(self.wav_file_name) # analyze .wav file
 
         if len(self.data.shape) > 1: # if multiple channels
-            print(f"DEBUG: Converted {self.data.shape[1]} channels to mono")
+            #print(f"DEBUG: Converted {self.data.shape[1]} channels to mono")
             self.data = np.mean(self.data, axis=1) # average channels to convert to mono
 
         self.length = round(self.data.shape[0] / self.sample_rate, 2)
         self.time = np.linspace(0., self.length, self.data.shape[0]) # create time array
 
-        print(f"DEBUG: number of channels = {self.data.shape[len(self.data.shape) -1]}")
-        print(f"DEBUG: sample rate = {self.sample_rate}Hz")
-        print(f"DEBUG: length = {self.length}s")
+        #print(f"DEBUG: number of channels = {self.data.shape[len(self.data.shape) -1]}")
+        #print(f"DEBUG: sample rate = {self.sample_rate}Hz")
+        #print(f"DEBUG: length = {self.length}s")
     
     def compute_frequency(self):
         self.spectrum, self.freqs, self.t, self.im = plt.specgram(self.data, Fs=self.sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
@@ -94,78 +86,48 @@ class Model:
                 break
         return x # return target frequency
 
-    def frequency_check(self):
-        # identify a frequency to check
-        #print(freqs)
-        target_frequency = [None, None, None]
-        target_frequency[0] = self.find_target_frequency(250)
-        target_frequency[1] = self.find_target_frequency(1000)
-        target_frequency[2] = self.find_target_frequency(5000)
-
-        data_for_frequency = [None, None, None]
-        for i in range(0, len(target_frequency)):
-            self.index_of_frequency[i] = np.where(self.freqs == target_frequency[i])[0][0]
-            data_for_frequency[i] = self.spectrum[self.index_of_frequency[i]]
-            self.data_in_db[i] = 10 * np.log10(data_for_frequency[i])
-
-        #index_of_frequency = np.where(self.freqs == target_frequency)[0][0]
-        # find sound data for a particular frequency
-        #data_for_frequency = self.spectrum[index_of_frequency]
-        # change a digital signal for a values in decibels
-        #data_in_db = 10 * np.log10(data_for_frequency)
-
+    def frequency_check(self, freq):
+        target_frequency = self.find_target_frequency(freq)
+        index_of_frequency = np.where(self.freqs == target_frequency)[0][0] 
+        data_for_frequency = self.spectrum[index_of_frequency]
+        data_in_db = 10 * np.log10(data_for_frequency)
+        return data_in_db
+    
     def find_nearest_value(self, array, value):
         array = np.asarray(array)
         idx = (np.abs(array - value)).argmin()
         return array[idx]
 
-    def compute_rt60(self):
-        index_of_max = [None, None, None]
-        value_of_max = [None, None, None]
-        for i in range(0, len(self.data_in_db)):
-            index_of_max[i] = np.argmax(self.data_in_db[i])
-            value_of_max[i] = self.data_in_db[i][index_of_max[i]]
-            #plt.plot(t[index_of_max], data_in_db[index_of_max], 'go')
-        #print(f"\nindex of max: {index_of_max[0]}")
-        #print(f"\nt index: {self.t[index_of_max[0]]}")
-        #print(f"\n data: {self.data_in_db}")
-        #print(f"\n data at 15: {self.data_in_db[0][15]}")
-        self.low_points[0] = [self.t[index_of_max[0]], self.data_in_db[0][index_of_max[0]]]
-        self.mid_points[0] = [self.t[index_of_max[1]], self.data_in_db[0][index_of_max[1]]]
-        self.high_points[0] = [self.t[index_of_max[2]], self.data_in_db[0][index_of_max[2]]]
+    def compute_rt60(self, freq=1000):
+        points = [None, None, None]
+        data_in_db = self.frequency_check(freq)
 
-        sliced_array = [None, None, None]
-        value_of_max_less_5 = [None, None, None]
-        index_of_max_less_5 = [None, None, None]
-        value_of_max_less_25 = [None, None, None]
-        index_of_max_less_25 = [None, None, None]
-        for i in range(0, len(self.data_in_db)):
-            sliced_array[i] = self.data_in_db[i][index_of_max[i]:]
+        index_of_max = np.argmax(data_in_db)
+        value_of_max = data_in_db[index_of_max]
+        print(f"\nindex: {index_of_max}")
+        print(f"t index: {self.t[index_of_max]}")
+        print(f"data index: {data_in_db[index_of_max]}")
+        points[0] = [self.t[index_of_max], data_in_db[index_of_max]]
 
-            value_of_max_less_5[i] = value_of_max[i] - 5
-            value_of_max_less_5[i] = self.find_nearest_value(sliced_array[i], value_of_max_less_5[i])
-            index_of_max_less_5[i] = np.where(self.data_in_db[i] == value_of_max_less_5[i])
-            value_of_max_less_25[i] = value_of_max[i] = 25
+        sliced_array = data_in_db[index_of_max:]
+        value_of_max_less_5 = value_of_max - 5
 
-            value_of_max_less_25[i] = self.find_nearest_value(sliced_array[i], value_of_max_less_25[i])
-            index_of_max_less_25[i] = np.where(self.data_in_db[i] == value_of_max_less_25[i])
+        value_of_max_less_5 = self.find_nearest_value(sliced_array, value_of_max_less_5)
+        index_of_max_less_5 = np.where(data_in_db == value_of_max_less_5)
+        points[1] = [self.t[index_of_max_less_5], data_in_db[index_of_max_less_5]]
 
-        self.low_points[1] = [self.t[index_of_max_less_5[0]], self.data_in_db[0][index_of_max_less_5[0]]]
-        self.mid_points[1] = [self.t[index_of_max_less_5[1]], self.data_in_db[0][index_of_max_less_5[1]]]
-        self.high_points[1] = [self.t[index_of_max_less_5[2]], self.data_in_db[0][index_of_max_less_5[2]]]
+        value_of_max_less_25 = value_of_max - 25
+        value_of_max_less_25 = self.find_nearest_value(sliced_array, value_of_max_less_25)
+        index_of_max_less_25 = np.where(data_in_db == value_of_max_less_25)
+        points[2] = [self.t[index_of_max_less_25], data_in_db[index_of_max_less_25]]
 
-        self.low_points[2] = [self.t[index_of_max_less_25[0]], self.data_in_db[0][index_of_max_less_25[0]]]
-        self.mid_points[2] = [self.t[index_of_max_less_25[1]], self.data_in_db[0][index_of_max_less_25[1]]]
-        self.high_points[2] = [self.t[index_of_max_less_25[2]], self.data_in_db[0][index_of_max_less_25[2]]]
+        rt20 = (self.t[index_of_max_less_5] - self.t[index_of_max_less_25])[0]
+        rt60 = 3 * rt20
 
-        rt20 = [None, None, None]
-        for i in range(len(rt20)):
-            rt20[i] = (self.t[index_of_max_less_5[i]] - self.t[index_of_max_less_25[i]])
-            self.rt60[i] = 3 * rt20[i]
-            print(f"{i} RT60 = {self.rt60[i]}")
-
-        for value in self.rt60:
-            self.difference += value
-        self.difference /= len(self.rt60)
-        self.difference -= 0.5
-        print(f"difference: {self.difference}")
+        return data_in_db, points, rt60
+    
+    def compute_difference(self, rt60_low, rt60_mid, rt60_high):
+        difference = (rt60_low + rt60_mid + rt60_high) / 3.0
+        difference -= 0.5
+        print(f"\ndifference: {difference}")
+        return difference

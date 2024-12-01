@@ -38,19 +38,24 @@ class Controller:
 
         self.view.t = self.model.t
 
-        self.model.frequency_check()
-        self.model.compute_rt60()
+        # data_in_db_### is used to create the initial plot
+        # points_### hold three arrays, each with two coordinates
+        #    the first array is max, second is max_less_5, and third is max_less_25
+        #       the first coordinate in first array replaces t[index_of_max]
+        #       the second coordinate in first array replaces data_in_db[index_of_max]
 
-        # these are arrays ([0] = low, [1] = mid, [2] = high)
-        self.view.data_in_db = self.model.data_in_db
-        # these are arrays of arrays corresponding with the line: plt.plot(...)
-        # [0] = t[index_of_max], [1] = data_in_db[index_of_max]
-        # [0] = max, [1] = -5, [2] = -25
-        # so, the line plt.plot(t[index_of_max], data_in_db[index_of_max], 'go')
-        # will look like: plt.plot(low_points[0][0], lowpoints[1][0])
-        self.view.low_points = self.model.low_points
-        self.view.mid_points = self.model.mid_points
-        self.view.high_points = self.model.high_points
-        # this is another array ([0] = low, [1] = mid, [2] = high)
-        self.view.rt60 = self.model.rt60
-        self.view.difference = self.model.difference
+        #       the first coordinate in second array replaces t[index_of_max_less_5]
+        #       the second coordinate in second array replaces data_in_db[index_of_max_less_5]
+
+        #       the first coordinate in third array replaces t[index_of_max_less_25]
+        #       the second coordinate in third array replaces data_in_db[index_of_max_less_25]
+
+        self.view.data_in_db_low, self.view.points_low, rt60_low = self.model.compute_rt60(250)
+        self.view.data_in_db_mid, self.view.points_mid, rt60_mid = self.model.compute_rt60(1000)
+        self.view.data_in_db_high, self.view.points_high, rt60_high = self.model.compute_rt60(5000)
+        
+        self.view.rt60_low = rt60_low
+        self.view.rt60_mid = rt60_mid
+        self.view.rt60_high = rt60_high
+
+        self.view.difference = self.model.compute_difference(rt60_low, rt60_mid, rt60_high)
