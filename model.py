@@ -123,7 +123,7 @@ class Model:
         index_of_max_less_25 = np.where(data_in_db == value_of_max_less_25)
         points[2] = [self.t[index_of_max_less_25], data_in_db[index_of_max_less_25]]
 
-        rt20 = (self.t[index_of_max_less_5] - self.t[index_of_max_less_25])[0]
+        rt20 = (self.t[index_of_max_less_25] - self.t[index_of_max_less_5])[0]
         rt60 = 3 * rt20
 
         return data_in_db, points, rt60
