@@ -12,6 +12,8 @@ This means that the Controller will need to:
         file_name = model.mp3_to_wav(file_name)
 - Call compute_frequency()
 - Call frequency_check()
+
+^ ALL ABOVE IS OUTDATED - WILL REWRITE
 '''
 
 from scipy.io import wavfile

@@ -25,7 +25,7 @@ def compute_frequency(data, sample_rate):
 
 def find_target_frequency(freqs):
     for x in freqs:
-        if x > 5000:
+        if x > 500:
             break
     return x
 
