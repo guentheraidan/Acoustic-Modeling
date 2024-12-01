@@ -10,8 +10,7 @@ class View(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)  
 
-    # # Configure rows and columns to expand
-
+    #Configure rows and columns to expand
         self.grid_columnconfigure(0, weight=1) # Column 0 expand
         self.grid_columnconfigure(1, weight=1) # Column 0 expand
         self.grid_columnconfigure(2, weight=0) # Column 0 expand
