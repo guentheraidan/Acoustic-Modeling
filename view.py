@@ -123,18 +123,18 @@ class View(ttk.Frame):
         self.combine_cycle_RT60_button.grid_remove()
 
     #display the file length 
-        self.label_flength = ttk.Label(self, text='File Length: 0 s')
-        self.label_flength.grid(row=5, column=1, sticky = "", pady = 5)
+        self.label_length = ttk.Label(self, text='File Length: 0 s')
+        self.label_length.grid(row=5, column=1, sticky = "", pady = 5)
 
 
     #display the frequency 
-        self.label_ffrequency = ttk.Label(self, text='Resonant Frequency: ___ Hz')
-        self.label_ffrequency.grid(row=6,column=1, sticky = "",  pady = 5)
+        self.label_frequency = ttk.Label(self, text='Resonant Frequency: ___ Hz')
+        self.label_frequency.grid(row=6,column=1, sticky = "",  pady = 5)
         
 
     #display the difference 
-        self.label_fdiff = ttk.Label(self, text='Difference: _.__ s ')
-        self.label_fdiff.grid(row=7, column=1,sticky = "", pady = 5)
+        self.label_difference = ttk.Label(self, text='Difference: _.__ s ')
+        self.label_difference.grid(row=7, column=1,sticky = "", pady = 5)
         
 
     def set_controller(self, controller):
@@ -164,6 +164,11 @@ class View(ttk.Frame):
             self.label_gfile.config(text = self.gfile)
     
     def reset_state(self):
+        #reset the info
+        self.label_length.config(text='File Length: 0 s')
+        self.label_frequency.config(text='Resonant Frequency: ___ Hz')
+        self.label_difference.config(text='Difference: _.__ s')
+
         #Hide these 
         self.intensity_button.grid_remove()
         self.waveform_button.grid_remove()
@@ -216,9 +221,9 @@ class View(ttk.Frame):
  
     #use in controller
     def display_info(self):
-        self.label_flength.config(text = f'File Length: {self.length} s')
-        self.label_ffrequency.config(text = f'Resonant Frequency: {self.rfrequency} Hz')
-        self.label_fdiff.config(text = f'Difference: { self.difference:.2f} s') #might need to format later
+        self.label_length.config(text = f'File Length: {self.length} s')
+        self.label_frequency.config(text = f'Resonant Frequency: {self.rfrequency} Hz')
+        self.label_difference.config(text = f'Difference: { self.difference:.2f} s') #might need to format later
     
     #Show four buttons for different graphs
     def add_buttons(self):
