@@ -7,4 +7,5 @@
 
 \f0\fs24 \cf0 .venv\
 test.py\
-__pycache__}
+__pycache__\
+.DS_Store}

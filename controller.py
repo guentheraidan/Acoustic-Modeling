@@ -51,8 +51,8 @@ class Controller:
         #       the second coordinate in third array replaces data_in_db[index_of_max_less_25]
 
         self.view.data_in_db_low, self.view.points_low, rt60_low = self.model.compute_rt60(250)
-        self.view.data_in_db_mid, self.view.points_mid, rt60_mid = self.model.compute_rt60(1000)
-        self.view.data_in_db_high, self.view.points_high, rt60_high = self.model.compute_rt60(5000)
+        self.view.data_in_db_mid, self.view.points_mid, rt60_mid = self.model.compute_rt60(500)
+        self.view.data_in_db_high, self.view.points_high, rt60_high = self.model.compute_rt60(1000)
         
         self.view.rt60_low = rt60_low
         self.view.rt60_mid = rt60_mid
