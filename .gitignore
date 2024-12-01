@@ -9,3 +9,7 @@
 test.py\
 __pycache__\
 .DS_Store}
+/__pycache__
+/__pycache__
+__pycache__/view.cpython-311.pyc
+.DS_Store
