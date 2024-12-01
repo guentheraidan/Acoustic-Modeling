@@ -10,13 +10,14 @@ class View(ttk.Frame):
         super().__init__(parent)  
 
     # # Configure rows and columns to expand
-        self.grid_rowconfigure(0, weight=1)  # Row 0 expands
+
         self.grid_columnconfigure(0, weight=1) # Column 0 expand
-        self.grid_rowconfigure(1, weight=1)  # Row 0 expands
         self.grid_columnconfigure(1, weight=1) # Column 0 expand
+        self.grid_columnconfigure(2, weight=0) # Column 0 expand
 
 
-    
+
+        self.resolution = 140
         self.gfile = ''
         self.controller = None
         self.length = 0 
@@ -34,7 +35,7 @@ class View(ttk.Frame):
             text='Open a File',
             command=self.open_button_clicked
         )
-        self.open_button.grid(row=1, column = 0, sticky= "w", padx = 30)
+        self.open_button.grid(row=1, column = 0, sticky= "w", padx = 20)
 
     # analyze button
         self.analyze_button = ttk.Button(
@@ -42,38 +43,77 @@ class View(ttk.Frame):
             text='Analyze File',
             command=self.analyze_file
         )
-        self.analyze_button.grid(row=1, column = 1, sticky= "e")
-        self.analyze_button.grid_forget() #hide the button when there is no file opened
+        self.analyze_button.grid(row=1, column = 2, sticky= "e")
+        self.analyze_button.grid_remove() #hide the button when there is no file opened
 
     #display the selected file
         self.label_fname = ttk.Label(self, text='File Name:')
-        self.label_fname.grid(row=2, column=0, sticky = "e", padx= (0,5))
+        self.label_fname.grid(row=2, column=0, sticky = "e")
         self.label_gfile = ttk.Label(self, text= "")
-        self.label_gfile.grid(row=2, column= 1, sticky = "w", padx=(5,10))
+        self.label_gfile.grid(row=2, column= 1, sticky = "w")
+
 
     
 
     # default graph
         # Create a frame for the plot
         self.plot_frame = ttk.Frame(self)
-        self.plot_frame.grid(row=3, column=0, columnspan=2, sticky="nsew")
+        self.plot_frame.grid(row=3, column=0, columnspan=3, sticky="nsew") #columnspan is the key to spacing of the buttons/labels
 
         self.default_plot()
         
-    
+    #Three graphs button. Initially hidden
+        #Intensity graph
+        self.intensity_button = ttk.Button(
+            self,
+            text='Intensity Graph',
+            command=self.intensity_button_clicked
+        )
+        self.intensity_button.grid(row = 4, column = 0,  pady = 10, sticky = "")
+
+        #Waveform graph
+        self.waveform_button = ttk.Button(
+            self,
+            text='Waveform Graph',
+            command=self.waveform_button_clicked
+        )
+        self.waveform_button.grid(row = 4, column = 1,  pady = 10, sticky = "")
+
+        #RT60 graphs
+        self.cycle_RT60_button = ttk.Button(
+            self,
+            text='Cycle RT60 Graph',
+            command=self.cycle_RT60_button_clicked
+        )
+        self.cycle_RT60_button.grid(row = 4, column = 2, pady = 10, sticky = "")
+
+        #Combine RT60 graphs
+        self.combine_cycle_RT60_button = ttk.Button(
+            self,
+            text='Combine RT60 Graphs',
+            command=self.combine_cycle_RT60_button_clicked
+        )
+        self.combine_cycle_RT60_button.grid(row = 5, column = 2, pady = 10,  sticky = "")
+
+        #Hide buttons
+        self.intensity_button.grid_remove()
+        self.waveform_button.grid_remove()
+        self.cycle_RT60_button.grid_remove()
+        self.combine_cycle_RT60_button.grid_remove()
+
     #display the file length 
         self.label_flength = ttk.Label(self, text='File Length: 0s')
-        self.label_flength.grid(row=5, sticky = "w", padx = 100)
+        self.label_flength.grid(row=5, column=1, sticky = "", pady = 5)
 
 
     #display the frequency 
         self.label_ffrequency = ttk.Label(self, text='File Resonant Frequency: ___ Hz')
-        self.label_ffrequency.grid(row=6, sticky = "w", padx = 100)
+        self.label_ffrequency.grid(row=6,column=1, sticky = "",  pady = 5)
         
 
     #display the difference 
         self.label_fdiff = ttk.Label(self, text='Difference: _.__ s ')
-        self.label_fdiff.grid(row=7, sticky = "w", padx = 100)
+        self.label_fdiff.grid(row=7, column=1,sticky = "", pady = 5)
         
 
     def set_controller(self, controller):
@@ -95,14 +135,14 @@ class View(ttk.Frame):
             if filename:  # Check if a file was selected
                 # Extract the file name by splitting the path
                 self.gfile = filename.split('/')[-1] if '/' in filename else filename.split('\\')[-1]
-                self.analyze_button.grid(row=1, column = 1, sticky= "w")
+                self.analyze_button.grid() 
 
                 
             #Display file name
             self.label_gfile.config(text = self.gfile)
 
     def default_plot(self):
-        figure = Figure(figsize=(5, 4), dpi=150)
+        figure = Figure(figsize=(5, 4), dpi=self.resolution)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
         x = [0, .2, .4, .6, .8, 1]
@@ -115,7 +155,7 @@ class View(ttk.Frame):
     
         canvas = FigureCanvasTkAgg(figure, master=self.plot_frame)
         canvas_widget = canvas.get_tk_widget()
-        canvas_widget.pack(fill=tk.BOTH, expand=True) 
+        canvas_widget.grid(row=3, column=0, sticky="nsew")
            
 
     def analyze_file(self):
@@ -124,7 +164,7 @@ class View(ttk.Frame):
         
         # Placeholder for the analyze button action
         self.label_analyzing = ttk.Label(self, text= f"Analyzing file: {self.gfile}")
-        self.label_analyzing.grid(row=1, column = 1, padx = 10, sticky= "e")
+        self.label_analyzing.grid(row=1, column = 2, padx = 10, sticky= "e")
 
         #Send the file name to controller
         if self.controller:
@@ -143,42 +183,16 @@ class View(ttk.Frame):
         self.label_ffrequency.config(text = f'File Resonant Frequency: {self.rfrequency} Hz')
         self.label_fdiff.config(text = f'Difference: {self.difference[-1] - self.difference[0]:.2f} s') #might need to format later
     
-    #Add four buttons for different graphs
+    #Show four buttons for different graphs
     def add_buttons(self):
-        #
-        self.intensity_button = ttk.Button(
-            self,
-            text='Intensity Graph',
-            command=self.intensity_button_clicked
-        )
-        self.intensity_button.grid(row = 4, column = 0, padx = 10, pady = 10)
-        
-        #
-        self.waveform_button = ttk.Button(
-            self,
-            text='Waveform Graph',
-            command=self.waveform_button_clicked
-        )
-        self.waveform_button.grid(row = 4, column = 1, padx = 20, pady = 10)
-        
-        #
-        self.cycle_RT60_button = ttk.Button(
-            self,
-            text='Cycle RT60 Graph',
-            command=self.cycle_RT60_button_clicked
-        )
-        self.cycle_RT60_button.grid(row = 4, column = 2, padx = 20, pady = 10)
-        
-        self.combine_cycle_RT60_button = ttk.Button(
-            self,
-            text='Combine RT60 Graphs',
-            command=self.combine_cycle_RT60_button_clicked
-        )
-        self.combine_cycle_RT60_button.grid(row = 5, column = 2, padx = 30, pady = 10)
+        self.intensity_button.grid()
+        self.waveform_button.grid()
+        self.cycle_RT60_button.grid()
+        self.combine_cycle_RT60_button.grid()
 
     #plotting intensity graph
     def intensity_button_clicked(self):
-        figure = Figure(figsize=(5, 4), dpi=150)
+        figure = Figure(figsize=(5, 4), dpi=self.resolution)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
         spectrum, freqs, t, im = axes.specgram(self.data, Fs=self.sample_rate, NFFT=1024, cmap=figure.get_cmap('autumn_r'))
@@ -195,11 +209,11 @@ class View(ttk.Frame):
 
         canvas = FigureCanvasTkAgg(figure, master=self.plot_frame)
         canvas_widget = canvas.get_tk_widget()
-        canvas_widget.pack(fill=tk.BOTH, expand=True)
+        canvas_widget.grid(row=3, column=0, sticky="nsew")
     
     #plotting waveform graph
     def waveform_button_clicked(self):
-        figure = Figure(figsize=(5, 4), dpi=150)
+        figure = Figure(figsize=(5, 4), dpi=self.resolution)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
         x = self.time
@@ -215,11 +229,11 @@ class View(ttk.Frame):
 
         canvas = FigureCanvasTkAgg(figure, master=self.plot_frame)
         canvas_widget = canvas.get_tk_widget()
-        canvas_widget.pack(fill=tk.BOTH, expand=True) 
+        canvas_widget.grid(row=3, column=0, sticky="nsew")
 
     
     def cycle_RT60_button_clicked(self):
-        figure = Figure(figsize=(5, 4), dpi=150)
+        figure = Figure(figsize=(5, 4), dpi=self.resolution)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
         if self.current == 0:
@@ -241,7 +255,7 @@ class View(ttk.Frame):
             self.current = 0
 
     def combine_cycle_RT60_button_clicked(self):
-        figure = Figure(figsize=(5, 4), dpi=150)
+        figure = Figure(figsize=(5, 4), dpi=self.resolution)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
         axes.set_title("Combine RT60 Graphs")
