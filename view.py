@@ -10,23 +10,19 @@ class View(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)  
 
-    #Configure rows and columns to expand
-        self.grid_columnconfigure(0, weight=1) # Column 0 expand
-        self.grid_columnconfigure(1, weight=1) # Column 0 expand
-        self.grid_columnconfigure(2, weight=0) # Column 0 expand
-
-
 
         self.resolution = 150
         self.num_size = 6
         self.letter_size = 8
+
+        #Variables that will communicate with controller
         self.filename = ''
         self.filepath = ''
         self.controller = None
         self.length = 0 
         self.rfrequency = 0
-        self.time = []
-        self.data = []
+        self.time = None
+        self.data = None
         self.sample_rate = None
         self.difference = None
         
@@ -73,17 +69,14 @@ class View(ttk.Frame):
         self.label_gfile = ttk.Label(self, text= "")
         self.label_gfile.grid(row=2, column= 1, sticky = "w")
 
-        
-    
-
     # default graph
         # Create a frame for the plot
         self.plot_frame = ttk.Frame(self)
         self.plot_frame.grid(row=3, column=0, columnspan=3, sticky="nsew") #columnspan is the key to spacing of the buttons/labels
-
+        #display the default plot
         self.default_plot()
         
-    #Three graphs button. Initially hidden
+    #Three graph buttons. Initially hidden
         #Intensity graph
         self.intensity_button = ttk.Button(
             self,
@@ -122,55 +115,57 @@ class View(ttk.Frame):
         self.cycle_RT60_button.grid_remove()
         self.combine_cycle_RT60_button.grid_remove()
 
-    #display the file length 
+
+    #Display information of the audio file
+        #display the file length 
         self.label_length = ttk.Label(self, text='File Length: 0 s')
         self.label_length.grid(row=5, column=1, sticky = "", pady = 5)
 
-
-    #display the frequency 
+        #display the frequency 
         self.label_frequency = ttk.Label(self, text='Resonant Frequency: ___ Hz')
         self.label_frequency.grid(row=6,column=1, sticky = "",  pady = 5)
-        
 
-    #display the difference 
+        #display the difference 
         self.label_difference = ttk.Label(self, text='Difference: _.__ s ')
         self.label_difference.grid(row=7, column=1,sticky = "", pady = 5)
         
 
+#Functions
+
+    #Connect view with controller
     def set_controller(self, controller):
         self.controller = controller
-
     
-    def open_button_clicked(self):
-            filetypes = (
-                ('wav files', '*.wav'),
-                ('mp3 files', '*.mp3')
-            )
+    #Create a default plot when user have yet clicked the analyze button
+    def default_plot(self):
+        figure = Figure(figsize=(5, 4), dpi=self.resolution)
+        axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
-            self.filepath = fd.askopenfilename(
-                title='Open a file',
-                initialdir='/',
-                filetypes=filetypes)
-
-            
-            if self.filepath:  # Check if a file was selected
-                # Extract the file name by splitting the path
-                self.filename = self.filepath.split('/')[-1] if '/' in self.filepath else self.filepath.split('\\')[-1]
-                #reset to initial condition when open a new file
-                self.reset_state()
-                self.analyze_button.grid() 
-
-                
-            #Display file name
-            self.label_gfile.config(text = self.filename)
+        x = [0, .2, .4, .6, .8, 1]
+        y = [0, .2, .4, .6, .8, 1]
+        axes.set_title("Default Graph")
+        axes.set_xlabel("X-axis", fontsize = self.letter_size )
+        axes.set_ylabel("Y-axis", fontsize = self.letter_size)
+        axes.tick_params(axis='x', labelsize=self.num_size)  
+        axes.tick_params(axis='y', labelsize=self.num_size)  
     
+        #Clear existing plot
+        for widget in self.plot_frame.winfo_children():
+            widget.destroy()
+
+        #Plot the graph    
+        canvas = FigureCanvasTkAgg(figure, master=self.plot_frame)
+        canvas_widget = canvas.get_tk_widget()
+        canvas_widget.grid(row=3, column=0, sticky="nsew")
+
+    #Reset to initial condition when open a new file    
     def reset_state(self):
-        #reset the info
+        #Reset the infomation
         self.label_length.config(text='File Length: 0 s')
         self.label_frequency.config(text='Resonant Frequency: ___ Hz')
         self.label_difference.config(text='Difference: _.__ s')
 
-        #Hide these 
+        #Hide these buttons and labels
         self.intensity_button.grid_remove()
         self.waveform_button.grid_remove()
         self.cycle_RT60_button.grid_remove()
@@ -183,35 +178,43 @@ class View(ttk.Frame):
         self.cycle_RT60_button.config(text="Cycle RT60 Graph")
         self.default_plot()
 
-    def default_plot(self):
-        figure = Figure(figsize=(5, 4), dpi=self.resolution)
-        axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
+    #Run when user clicked open file button
+    def open_button_clicked(self):
+            filetypes = (
+                ('wav files', '*.wav'),
+                ('mp3 files', '*.mp3')
+            )
 
-        x = [0, .2, .4, .6, .8, 1]
-        y = [0, .2, .4, .6, .8, 1]
-        axes.set_title("Default Graph")
-        axes.set_xlabel("X-axis", fontsize = self.letter_size )
-        axes.set_ylabel("Y-axis", fontsize = self.letter_size)
-        axes.tick_params(axis='x', labelsize=self.num_size)  # Reduce label font size
-        axes.tick_params(axis='y', labelsize=self.num_size)  # Reduce label font size
-    
-        #Clear existing plot
-        for widget in self.plot_frame.winfo_children():
-            widget.destroy()
-        canvas = FigureCanvasTkAgg(figure, master=self.plot_frame)
-        canvas_widget = canvas.get_tk_widget()
-        canvas_widget.grid(row=3, column=0, sticky="nsew")
-           
+            self.filepath = fd.askopenfilename(
+                title='Open a file',
+                initialdir='/',
+                filetypes=filetypes)
 
+            #If the file was selected
+            if self.filepath:
+
+                # Extract the file name by splitting the path to use for display
+                self.filename = self.filepath.split('/')[-1] if '/' in self.filepath else self.filepath.split('\\')[-1]
+                           
+                self.reset_state()
+
+                #Show the analyze button
+                self.analyze_button.grid() 
+
+                
+            #Display file name
+            self.label_gfile.config(text = self.filename)
+         
+    #When clicked analyze button
     def analyze_file(self):
         # Hide the button after it's clicked
         self.analyze_button.grid_forget()
         
-        # Placeholder for the analyze button action
+        # Label for the analyze button action
         self.label_analyzing.config(text= f"Analyzing file: {self.filename}")
         self.label_analyzing.grid()
 
-        #Send the file name to controller
+        #Send the file path to controller
         if self.controller:
             self.controller.analyze_file(self.filepath)
 
@@ -221,15 +224,8 @@ class View(ttk.Frame):
 
         #Add buttons for different graphs
         self.add_buttons()
-
         self.display_info()
  
-    #use in controller
-    def display_info(self):
-        self.label_length.config(text = f'File Length: {self.length} s')
-        self.label_frequency.config(text = f'Resonant Frequency: {self.rfrequency} Hz')
-        self.label_difference.config(text = f'Difference: { self.difference:.2f} s') #might need to format later
-    
     #Show four buttons for different graphs
     def add_buttons(self):
         self.intensity_button.grid()
@@ -237,7 +233,13 @@ class View(ttk.Frame):
         self.cycle_RT60_button.grid()
         self.combine_cycle_RT60_button.grid()
 
-    #plotting intensity graph
+    #Display these information after user clicked analyze button
+    def display_info(self):
+        self.label_length.config(text = f'File Length: {self.length} s')
+        self.label_frequency.config(text = f'Resonant Frequency: {self.rfrequency} Hz')
+        self.label_difference.config(text = f'Difference: { self.difference:.2f} s') #might need to format later
+    
+    #Plot the intensity graph
     def intensity_button_clicked(self):
         figure = Figure(figsize=(5, 4), dpi=self.resolution)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
@@ -264,7 +266,7 @@ class View(ttk.Frame):
         canvas_widget = canvas.get_tk_widget()
         canvas_widget.grid(row=3, column=0, sticky="nsew")
     
-    #plotting waveform graph
+    #Plot the waveform graph
     def waveform_button_clicked(self):
         figure = Figure(figsize=(5, 4), dpi=self.resolution)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
@@ -286,7 +288,7 @@ class View(ttk.Frame):
         canvas_widget = canvas.get_tk_widget()
         canvas_widget.grid(row=3, column=0, sticky="nsew")
 
-    
+    #Plot each RT60 graphs
     def cycle_RT60_button_clicked(self):
         figure = Figure(figsize=(5, 4), dpi=self.resolution)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
@@ -336,7 +338,7 @@ class View(ttk.Frame):
         canvas_widget = canvas.get_tk_widget()
         canvas_widget.grid(row=3, column=0, sticky="nsew")
 
-
+    #Plot all the RT60 graphs
     def combine_cycle_RT60_button_clicked(self):
         figure = Figure(figsize=(5, 4), dpi=self.resolution)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
