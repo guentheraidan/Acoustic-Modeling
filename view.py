@@ -21,7 +21,8 @@ class View(ttk.Frame):
         self.resolution = 150
         self.num_size = 6
         self.letter_size = 8
-        self.gfile = ''
+        self.filename = ''
+        self.filepath = ''
         self.controller = None
         self.length = 0 
         self.rfrequency = 0
@@ -147,21 +148,22 @@ class View(ttk.Frame):
                 ('mp3 files', '*.mp3')
             )
 
-            filename = fd.askopenfilename(
+            self.filepath = fd.askopenfilename(
                 title='Open a file',
                 initialdir='/',
                 filetypes=filetypes)
 
             
-            if filename:  # Check if a file was selected
+            if self.filepath:  # Check if a file was selected
                 # Extract the file name by splitting the path
-                self.gfile = filename.split('/')[-1] if '/' in filename else filename.split('\\')[-1]
+                self.filename = self.filepath.split('/')[-1] if '/' in self.filepath else self.filepath.split('\\')[-1]
+                #reset to initial condition when open a new file
                 self.reset_state()
                 self.analyze_button.grid() 
 
                 
             #Display file name
-            self.label_gfile.config(text = self.gfile)
+            self.label_gfile.config(text = self.filename)
     
     def reset_state(self):
         #reset the info
@@ -207,12 +209,12 @@ class View(ttk.Frame):
         self.analyze_button.grid_forget()
         
         # Placeholder for the analyze button action
-        self.label_analyzing.config(text= f"Analyzing file: {self.gfile}")
+        self.label_analyzing.config(text= f"Analyzing file: {self.filename}")
         self.label_analyzing.grid()
 
         #Send the file name to controller
         if self.controller:
-            self.controller.analyze_file(self.gfile)
+            self.controller.analyze_file(self.filepath)
 
         
         #Show waveform graph
