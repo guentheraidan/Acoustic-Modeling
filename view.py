@@ -58,7 +58,7 @@ class View(ttk.Frame):
             text='Analyze File',
             command=self.analyze_file
         )
-        self.analyze_button.grid(row=1, column = 2, padx = 10, sticky= "e")
+        self.analyze_button.grid(row=1, column = 2, padx = 20, sticky= "e")
         self.analyze_button.grid_remove() #hide the button when there is no file opened
 
     #display the selected file
@@ -291,8 +291,41 @@ class View(ttk.Frame):
             axes.plot(self.points_high[2][0], self.points_high[2][1], 'ro')
             self.current = 0
 
+        for widget in self.plot_frame.winfo_children():
+            widget.destroy()
+
+        canvas = FigureCanvasTkAgg(figure, master=self.plot_frame)
+        canvas_widget = canvas.get_tk_widget()
+        canvas_widget.grid(row=3, column=0, sticky="nsew")
+
+
     def combine_cycle_RT60_button_clicked(self):
         figure = Figure(figsize=(5, 4), dpi=self.resolution)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
         axes.set_title("Combine RT60 Graphs")
+
+        #Low graph
+        axes.plot(self.t, self.data_in_db_low, linewidth=1, alpha=0.7, color='#004bc6')
+        axes.plot(self.points_low[0][0], self.points_low[0][1], 'go')
+        axes.plot(self.points_low[1][0], self.points_low[1][1], 'yo')
+        axes.plot(self.points_low[2][0], self.points_low[2][1], 'ro')
+
+        #Mid graph
+        axes.plot(self.t, self.data_in_db_mid, linewidth=1, alpha=0.7, color='#004bc6')
+        axes.plot(self.points_mid[0][0], self.points_mid[0][1], 'go')
+        axes.plot(self.points_mid[1][0], self.points_mid[1][1], 'yo')
+        axes.plot(self.points_mid[2][0], self.points_mid[2][1], 'ro')
+
+        #High graph
+        axes.plot(self.t, self.data_in_db_low, linewidth=1, alpha=0.7, color='#004bc6')
+        axes.plot(self.points_high[0][0], self.points_high[0][1], 'go')
+        axes.plot(self.points_high[1][0], self.points_high[1][1], 'yo')
+        axes.plot(self.points_high[2][0], self.points_high[2][1], 'ro')
+
+        for widget in self.plot_frame.winfo_children():
+            widget.destroy()
+
+        canvas = FigureCanvasTkAgg(figure, master=self.plot_frame)
+        canvas_widget = canvas.get_tk_widget()
+        canvas_widget.grid(row=3, column=0, sticky="nsew")
