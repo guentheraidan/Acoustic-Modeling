@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import filedialog as fd
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.cm as cm
 import numpy as np
 
 class View(ttk.Frame):
@@ -26,7 +27,21 @@ class View(ttk.Frame):
         self.data = []
         self.sample_rate = None
         self.difference = None
+        
+        self.t = None
         self.current = 0 #For Low, Miu, High button
+        
+        self.data_in_db_low = None
+        self.data_in_db_mid = None
+        self.data_in_db_high = None
+        
+        self.points_low = None
+        self.points_mid = None
+        self.points_high = None
+
+        self.rt60_low = None
+        self.rt60_mid = None
+        self.rt60_high = None
 
         
     # open button
@@ -43,7 +58,7 @@ class View(ttk.Frame):
             text='Analyze File',
             command=self.analyze_file
         )
-        self.analyze_button.grid(row=1, column = 2, sticky= "e")
+        self.analyze_button.grid(row=1, column = 2, padx = 10, sticky= "e")
         self.analyze_button.grid_remove() #hide the button when there is no file opened
 
     #display the selected file
@@ -176,12 +191,14 @@ class View(ttk.Frame):
 
         #Add buttons for different graphs
         self.add_buttons()
+
+        self.display_info()
  
     #use in controller
-    def diplay_info(self):
+    def display_info(self):
         self.label_flength.config(text = f'File Length: {self.length}')
         self.label_ffrequency.config(text = f'File Resonant Frequency: {self.rfrequency} Hz')
-        self.label_fdiff.config(text = f'Difference: {self.difference[-1] - self.difference[0]:.2f} s') #might need to format later
+        self.label_fdiff.config(text = f'Difference: { self.difference:.2f} s') #might need to format later
     
     #Show four buttons for different graphs
     def add_buttons(self):
@@ -195,7 +212,11 @@ class View(ttk.Frame):
         figure = Figure(figsize=(5, 4), dpi=self.resolution)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
-        spectrum, freqs, t, im = axes.specgram(self.data, Fs=self.sample_rate, NFFT=1024, cmap=figure.get_cmap('autumn_r'))
+        spectrum, freqs, t, im = axes.specgram(
+            self.data, 
+            Fs=self.sample_rate, 
+            NFFT=1024, 
+            cmap=cm.get_cmap('autumn_r'))
         cbar = figure.colorbar(im, ax=axes)
         cbar.set_label("Intensity (dB)")
 
@@ -236,22 +257,38 @@ class View(ttk.Frame):
         figure = Figure(figsize=(5, 4), dpi=self.resolution)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
+        axes.set_xlabel("Time (s)")
+        axes.set_ylabel("Power (dB)")
+
         if self.current == 0:
             self.cycle_RT60_button.config(text = "Low")
             axes.set_title("Low RT60 Graph")
-            #add graph data here
+
+            axes.plot(self.t, self.data_in_db_low, linewidth=1, alpha=0.7, color='#004bc6')
+            axes.plot(self.points_low[0][0], self.points_low[0][1], 'go')
+            axes.plot(self.points_low[1][0], self.points_low[1][1], 'yo')
+            axes.plot(self.points_low[2][0], self.points_low[2][1], 'ro')
             self.current = 1
 
         elif self.current == 1:
             self.cycle_RT60_button.config(text = "Mid")
             axes.set_title("Mid RT60 Graph")
-            #add graph data here
+
+            axes.plot(self.t, self.data_in_db_mid, linewidth=1, alpha=0.7, color='#004bc6')
+            axes.plot(self.points_mid[0][0], self.points_mid[0][1], 'go')
+            axes.plot(self.points_mid[1][0], self.points_mid[1][1], 'yo')
+            axes.plot(self.points_mid[2][0], self.points_mid[2][1], 'ro')
+            
             self.current = 2
         
         elif self.current == 2:
             self.cycle_RT60_button.config(text = "High")
             axes.set_title("High RT60 Graph")
-            #add graph data here
+
+            axes.plot(self.t, self.data_in_db_low, linewidth=1, alpha=0.7, color='#004bc6')
+            axes.plot(self.points_high[0][0], self.points_high[0][1], 'go')
+            axes.plot(self.points_high[1][0], self.points_high[1][1], 'yo')
+            axes.plot(self.points_high[2][0], self.points_high[2][1], 'ro')
             self.current = 0
 
     def combine_cycle_RT60_button_clicked(self):
