@@ -63,13 +63,17 @@ class View(ttk.Frame):
         self.analyze_button.grid(row=1, column = 2, padx = 20, sticky= "e")
         self.analyze_button.grid_remove() #hide the button when there is no file opened
 
+        self.label_analyzing = ttk.Label(self, text= "")
+        self.label_analyzing.grid(row=1, column = 2, padx = 10, sticky= "e")
+        self.label_analyzing.grid_remove()
+
     #display the selected file
         self.label_fname = ttk.Label(self, text='File Name:')
         self.label_fname.grid(row=2, column=0, sticky = "e")
         self.label_gfile = ttk.Label(self, text= "")
         self.label_gfile.grid(row=2, column= 1, sticky = "w")
 
-
+        
     
 
     # default graph
@@ -152,11 +156,25 @@ class View(ttk.Frame):
             if filename:  # Check if a file was selected
                 # Extract the file name by splitting the path
                 self.gfile = filename.split('/')[-1] if '/' in filename else filename.split('\\')[-1]
+                self.reset_state()
                 self.analyze_button.grid() 
 
                 
             #Display file name
             self.label_gfile.config(text = self.gfile)
+    
+    def reset_state(self):
+        #Hide these 
+        self.intensity_button.grid_remove()
+        self.waveform_button.grid_remove()
+        self.cycle_RT60_button.grid_remove()
+        self.combine_cycle_RT60_button.grid_remove()
+        self.label_analyzing.grid_remove()
+
+        #Reset these
+        self.analyze_button.grid(row=1, column = 2, padx = 20, sticky= "e")
+        self.current = 0
+        self.cycle_RT60_button.config(text="Cycle RT60 Graph")
 
     def default_plot(self):
         figure = Figure(figsize=(5, 4), dpi=self.resolution)
@@ -180,8 +198,8 @@ class View(ttk.Frame):
         self.analyze_button.grid_forget()
         
         # Placeholder for the analyze button action
-        self.label_analyzing = ttk.Label(self, text= f"Analyzing file: {self.gfile}")
-        self.label_analyzing.grid(row=1, column = 2, padx = 10, sticky= "e")
+        self.label_analyzing.config(text= f"Analyzing file: {self.gfile}")
+        self.label_analyzing.grid()
 
         #Send the file name to controller
         if self.controller:
@@ -272,7 +290,7 @@ class View(ttk.Frame):
             self.cycle_RT60_button.config(text = "Low")
             axes.set_title("Low RT60 Graph")
 
-            axes.plot(self.t, self.data_in_db_low, linewidth=1, alpha=0.7, color='#004bc6')
+            axes.plot(self.t, self.data_in_db_low, linewidth=1, alpha=0.7, color='#ffd700')
             axes.plot(self.points_low[0][0], self.points_low[0][1], 'go')
             axes.plot(self.points_low[1][0], self.points_low[1][1], 'yo')
             axes.plot(self.points_low[2][0], self.points_low[2][1], 'ro')
@@ -282,7 +300,7 @@ class View(ttk.Frame):
             self.cycle_RT60_button.config(text = "Mid")
             axes.set_title("Mid RT60 Graph")
 
-            axes.plot(self.t, self.data_in_db_mid, linewidth=1, alpha=0.7, color='#004bc6')
+            axes.plot(self.t, self.data_in_db_mid, linewidth=1, alpha=0.7, color='#ff4500')
             axes.plot(self.points_mid[0][0], self.points_mid[0][1], 'go')
             axes.plot(self.points_mid[1][0], self.points_mid[1][1], 'yo')
             axes.plot(self.points_mid[2][0], self.points_mid[2][1], 'ro')
@@ -320,13 +338,13 @@ class View(ttk.Frame):
         axes.tick_params(axis='y', labelsize=self.num_size)
 
         #Low graph
-        axes.plot(self.t, self.data_in_db_low, linewidth=1, alpha=0.7, color='#004bc6')
+        axes.plot(self.t, self.data_in_db_low, linewidth=1, alpha=0.7, color='#ffd700')
         axes.plot(self.points_low[0][0], self.points_low[0][1], 'go')
         axes.plot(self.points_low[1][0], self.points_low[1][1], 'yo')
         axes.plot(self.points_low[2][0], self.points_low[2][1], 'ro')
 
         #Mid graph
-        axes.plot(self.t, self.data_in_db_mid, linewidth=1, alpha=0.7, color='#004bc6')
+        axes.plot(self.t, self.data_in_db_mid, linewidth=1, alpha=0.7, color='#ff4500')
         axes.plot(self.points_mid[0][0], self.points_mid[0][1], 'go')
         axes.plot(self.points_mid[1][0], self.points_mid[1][1], 'yo')
         axes.plot(self.points_mid[2][0], self.points_mid[2][1], 'ro')
