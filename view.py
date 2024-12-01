@@ -10,10 +10,10 @@ class View(ttk.Frame):
         super().__init__(parent)  
 
     # # Configure rows and columns to expand
-    #     self.grid_rowconfigure(0, weight=1)  # Row 0 expands
-    #     self.grid_columnconfigure(0, weight=1) # Column 0 expand
-    #     self.grid_rowconfigure(1, weight=1)  # Row 0 expands
-    #     self.grid_columnconfigure(1, weight=1) # Column 0 expand
+        self.grid_rowconfigure(0, weight=1)  # Row 0 expands
+        self.grid_columnconfigure(0, weight=1) # Column 0 expand
+        self.grid_rowconfigure(1, weight=1)  # Row 0 expands
+        self.grid_columnconfigure(1, weight=1) # Column 0 expand
 
 
     
@@ -47,7 +47,7 @@ class View(ttk.Frame):
 
     #display the selected file
         self.label_fname = ttk.Label(self, text='File Name:')
-        self.label_fname.grid(row=2, column=0, sticky = "e", padx= (0,10))
+        self.label_fname.grid(row=2, column=0, sticky = "e", padx= (0,5))
         self.label_gfile = ttk.Label(self, text= "")
         self.label_gfile.grid(row=2, column= 1, sticky = "w", padx=(5,10))
 
@@ -63,17 +63,17 @@ class View(ttk.Frame):
     
     #display the file length 
         self.label_flength = ttk.Label(self, text='File Length: 0s')
-        self.label_flength.grid(row=5, sticky = "ew", padx = 400)
+        self.label_flength.grid(row=5, sticky = "w", padx = 100)
 
 
     #display the frequency 
         self.label_ffrequency = ttk.Label(self, text='File Resonant Frequency: ___ Hz')
-        self.label_ffrequency.grid(row=6, sticky = "ew", padx = 400)
+        self.label_ffrequency.grid(row=6, sticky = "w", padx = 100)
         
 
     #display the difference 
         self.label_fdiff = ttk.Label(self, text='Difference: _.__ s ')
-        self.label_fdiff.grid(row=7, sticky = "ew", padx = 400)
+        self.label_fdiff.grid(row=7, sticky = "w", padx = 100)
         
 
     def set_controller(self, controller):
