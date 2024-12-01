@@ -18,7 +18,9 @@ class View(ttk.Frame):
 
 
 
-        self.resolution = 140
+        self.resolution = 150
+        self.num_size = 6
+        self.letter_size = 8
         self.gfile = ''
         self.controller = None
         self.length = 0 
@@ -117,12 +119,12 @@ class View(ttk.Frame):
         self.combine_cycle_RT60_button.grid_remove()
 
     #display the file length 
-        self.label_flength = ttk.Label(self, text='File Length: 0s')
+        self.label_flength = ttk.Label(self, text='File Length: 0 s')
         self.label_flength.grid(row=5, column=1, sticky = "", pady = 5)
 
 
     #display the frequency 
-        self.label_ffrequency = ttk.Label(self, text='File Resonant Frequency: ___ Hz')
+        self.label_ffrequency = ttk.Label(self, text='Resonant Frequency: ___ Hz')
         self.label_ffrequency.grid(row=6,column=1, sticky = "",  pady = 5)
         
 
@@ -163,10 +165,10 @@ class View(ttk.Frame):
         x = [0, .2, .4, .6, .8, 1]
         y = [0, .2, .4, .6, .8, 1]
         axes.set_title("Default Graph")
-        axes.set_xlabel("X-axis")
-        axes.set_ylabel("Y-axis")
-        
-
+        axes.set_xlabel("X-axis", fontsize = self.letter_size )
+        axes.set_ylabel("Y-axis", fontsize = self.letter_size)
+        axes.tick_params(axis='x', labelsize=self.num_size)  # Reduce label font size
+        axes.tick_params(axis='y', labelsize=self.num_size)  # Reduce label font size
     
         canvas = FigureCanvasTkAgg(figure, master=self.plot_frame)
         canvas_widget = canvas.get_tk_widget()
@@ -196,8 +198,8 @@ class View(ttk.Frame):
  
     #use in controller
     def display_info(self):
-        self.label_flength.config(text = f'File Length: {self.length}')
-        self.label_ffrequency.config(text = f'File Resonant Frequency: {self.rfrequency} Hz')
+        self.label_flength.config(text = f'File Length: {self.length} s')
+        self.label_ffrequency.config(text = f'Resonant Frequency: {self.rfrequency} Hz')
         self.label_fdiff.config(text = f'Difference: { self.difference:.2f} s') #might need to format later
     
     #Show four buttons for different graphs
@@ -221,8 +223,10 @@ class View(ttk.Frame):
         cbar.set_label("Intensity (dB)")
 
         axes.set_title("Frequency Graph")
-        axes.set_xlabel("Time (s)")
-        axes.set_ylabel("Frequency (Hz)")
+        axes.set_xlabel("Time (s)", fontsize = self.letter_size)
+        axes.set_ylabel("Frequency (Hz)", fontsize = self.letter_size)
+        axes.tick_params(axis='x', labelsize=self.num_size) 
+        axes.tick_params(axis='y', labelsize=self.num_size)  # Reduce label font size
 
         #Clear existing plot
         for widget in self.plot_frame.winfo_children():
@@ -241,8 +245,10 @@ class View(ttk.Frame):
         y = self.data
         axes.plot(x, y)
         axes.set_title("Waveform Graph")
-        axes.set_xlabel("Time (s)")
-        axes.set_ylabel("Amplitude")
+        axes.set_xlabel("Time (s)", fontsize = self.letter_size)
+        axes.set_ylabel("Amplitude", fontsize = self.letter_size)
+        axes.tick_params(axis='x', labelsize=self.num_size) 
+        axes.tick_params(axis='y', labelsize=self.num_size)  # Reduce label font size
 
         #Clear existing plot
         for widget in self.plot_frame.winfo_children():
@@ -257,8 +263,10 @@ class View(ttk.Frame):
         figure = Figure(figsize=(5, 4), dpi=self.resolution)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
-        axes.set_xlabel("Time (s)")
-        axes.set_ylabel("Power (dB)")
+        axes.set_xlabel("Time (s)", fontsize = self.letter_size)
+        axes.set_ylabel("Power (dB)", fontsize = self.letter_size)
+        axes.tick_params(axis='x', labelsize=self.num_size) 
+        axes.tick_params(axis='y', labelsize=self.num_size)  # Reduce label font size
 
         if self.current == 0:
             self.cycle_RT60_button.config(text = "Low")
@@ -285,12 +293,14 @@ class View(ttk.Frame):
             self.cycle_RT60_button.config(text = "High")
             axes.set_title("High RT60 Graph")
 
-            axes.plot(self.t, self.data_in_db_low, linewidth=1, alpha=0.7, color='#004bc6')
+            axes.plot(self.t, self.data_in_db_high, linewidth=1, alpha=0.7, color='#004bc6')
             axes.plot(self.points_high[0][0], self.points_high[0][1], 'go')
             axes.plot(self.points_high[1][0], self.points_high[1][1], 'yo')
             axes.plot(self.points_high[2][0], self.points_high[2][1], 'ro')
             self.current = 0
 
+
+        #Clear existing plot
         for widget in self.plot_frame.winfo_children():
             widget.destroy()
 
@@ -304,6 +314,10 @@ class View(ttk.Frame):
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
         axes.set_title("Combine RT60 Graphs")
+        axes.set_xlabel("Time (s)", fontsize = self.letter_size)
+        axes.set_ylabel("Power (dB)", fontsize = self.letter_size)
+        axes.tick_params(axis='x', labelsize=self.num_size) 
+        axes.tick_params(axis='y', labelsize=self.num_size)
 
         #Low graph
         axes.plot(self.t, self.data_in_db_low, linewidth=1, alpha=0.7, color='#004bc6')
@@ -318,11 +332,13 @@ class View(ttk.Frame):
         axes.plot(self.points_mid[2][0], self.points_mid[2][1], 'ro')
 
         #High graph
-        axes.plot(self.t, self.data_in_db_low, linewidth=1, alpha=0.7, color='#004bc6')
+        axes.plot(self.t, self.data_in_db_high, linewidth=1, alpha=0.7, color='#004bc6')
         axes.plot(self.points_high[0][0], self.points_high[0][1], 'go')
         axes.plot(self.points_high[1][0], self.points_high[1][1], 'yo')
         axes.plot(self.points_high[2][0], self.points_high[2][1], 'ro')
 
+        
+        #Clear existing plot
         for widget in self.plot_frame.winfo_children():
             widget.destroy()
 
