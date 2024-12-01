@@ -180,6 +180,7 @@ class View(ttk.Frame):
         self.analyze_button.grid(row=1, column = 2, padx = 20, sticky= "e")
         self.current = 0
         self.cycle_RT60_button.config(text="Cycle RT60 Graph")
+        self.default_plot()
 
     def default_plot(self):
         figure = Figure(figsize=(5, 4), dpi=self.resolution)
@@ -193,6 +194,9 @@ class View(ttk.Frame):
         axes.tick_params(axis='x', labelsize=self.num_size)  # Reduce label font size
         axes.tick_params(axis='y', labelsize=self.num_size)  # Reduce label font size
     
+        #Clear existing plot
+        for widget in self.plot_frame.winfo_children():
+            widget.destroy()
         canvas = FigureCanvasTkAgg(figure, master=self.plot_frame)
         canvas_widget = canvas.get_tk_widget()
         canvas_widget.grid(row=3, column=0, sticky="nsew")
