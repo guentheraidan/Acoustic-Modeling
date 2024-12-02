@@ -101,10 +101,10 @@ class View(ttk.Frame):
         )
         self.cycle_RT60_button.grid(row = 4, column = 2, pady = 10, sticky = "")
 
-        #Combine RT60 graphs
+        #Combined RT60 graphs
         self.combine_cycle_RT60_button = ttk.Button(
             self,
-            text='Combine RT60 Graphs',
+            text='Combined RT60 Graphs',
             command=self.combine_cycle_RT60_button_clicked
         )
         self.combine_cycle_RT60_button.grid(row = 5, column = 2, pady = 10,  sticky = "")
@@ -118,7 +118,7 @@ class View(ttk.Frame):
 
     #Display information of the audio file
         #display the file length 
-        self.label_length = ttk.Label(self, text='File Length: 0 s')
+        self.label_length = ttk.Label(self, text='File Length: 0s')
         self.label_length.grid(row=5, column=1, sticky = "", pady = 5)
 
         #display the frequency 
@@ -126,7 +126,7 @@ class View(ttk.Frame):
         self.label_frequency.grid(row=6,column=1, sticky = "",  pady = 5)
 
         #display the difference 
-        self.label_difference = ttk.Label(self, text='Difference: _.__ s ')
+        self.label_difference = ttk.Label(self, text='Difference: _.__s ')
         self.label_difference.grid(row=7, column=1,sticky = "", pady = 5)
         
 
@@ -161,9 +161,9 @@ class View(ttk.Frame):
     #Reset to initial condition when open a new file    
     def reset_state(self):
         #Reset the infomation
-        self.label_length.config(text='File Length: 0 s')
+        self.label_length.config(text='File Length: 0s')
         self.label_frequency.config(text='Resonant Frequency: ___ Hz')
-        self.label_difference.config(text='Difference: _.__ s')
+        self.label_difference.config(text='Difference: _.__s')
 
         #Hide these buttons and labels
         self.intensity_button.grid_remove()
@@ -235,9 +235,9 @@ class View(ttk.Frame):
 
     #Display these information after user clicked analyze button
     def display_info(self):
-        self.label_length.config(text = f'File Length: {self.length} s')
+        self.label_length.config(text = f'File Length: {self.length}s')
         self.label_frequency.config(text = f'Resonant Frequency: {self.rfrequency} Hz')
-        self.label_difference.config(text = f'Difference: { self.difference:.2f} s') #might need to format later
+        self.label_difference.config(text = f'Difference: { self.difference:.2f}s') #might need to format later
     
     #Plot the intensity graph
     def intensity_button_clicked(self):
@@ -343,7 +343,7 @@ class View(ttk.Frame):
         figure = Figure(figsize=(5, 4), dpi=self.resolution)
         axes = figure.add_subplot(1, 1, 1) #nrows, ncols, index
 
-        axes.set_title("Combine RT60 Graphs")
+        axes.set_title("Combined RT60 Graphs")
         axes.set_xlabel("Time (s)", fontsize = self.letter_size)
         axes.set_ylabel("Power (dB)", fontsize = self.letter_size)
         axes.tick_params(axis='x', labelsize=self.num_size) 
