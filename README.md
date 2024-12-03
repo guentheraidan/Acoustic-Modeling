@@ -9,7 +9,7 @@ Hence this application was created to allows users to import WAV and MP3 audio f
 To run this application, clone this repo to your local machine. Then, 
 check out the requirement.txt for the list of packages that need to be pip installed.
 
-Once acquired all files and libraries needed, run _app.py_ to access the application. <br />
+Once all files and libraries have been downloaded, run _app.py_ to access the application. <br />
 
 ## Credits
 This project (Scientific Python Interactive Data Acoustic Modeling (SPIDAM) Project) was made under the instructions of Dr. Christian Navarro for the course COP2080 at Florida Polytechnic University.
