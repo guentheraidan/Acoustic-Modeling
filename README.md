@@ -5,6 +5,7 @@ Hearing and understanding the speaker in a classroom are crucial factors in perm
 
 Hence this application was created to allows users to import WAV and MP3 audio files of reverberation of enclosed space, assumed that the audio was recorded has at least one second of reverberation time. The program can interpret any valid audio, however, is focused on analyzing the sound of a hand clap recorded around three meters away from a recording device. <br />
 
+## Usage Instruction
 To run this application, download the following:
 - app.py
 - view.py
@@ -12,4 +13,11 @@ To run this application, download the following:
 - controller.py
 - check out the requirement.txt for the list of packages that need to be pip installed
 
-Once acquired all files and libraries needed, run app.py to access the application.
+Once acquired all files and libraries needed, run app.py to access the application. <br />
+
+## Credits
+This project (Scientific Python Interactive Data Acoustic Modeling (SPIDAM) Project) was made under the instructions of Dr. Christian Navarro for the course COP2080 at Florida Polytechnic University.
+
+Made by:
+Aidan Guenther - Computer Science
+Le Vi Pham - Computer Science
